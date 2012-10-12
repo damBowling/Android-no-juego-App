@@ -1,5 +1,6 @@
 package com.damBowling.mybolos;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Vector;
 
@@ -41,7 +42,9 @@ public class Login extends Activity {
 	Resources res;
 
 	/** Called when the activity is first created. */
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 * 
 	 * Este metodo inicializa todos los objetos y prepara la ejecución
@@ -57,12 +60,16 @@ public class Login extends Activity {
 		entrar = (Button) findViewById(R.id.button1);
 		telefono = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 		res = getResources();
-		//Hacemos un res.getString() y obtenemos el String almacenado en el XML de strings de la url del servidor
-		webservice = res.getString(R.string.server)+"bowling/bjparser/webservices/getLogin.php";
+		// Hacemos un res.getString() y obtenemos el String almacenado en el XML
+		// de strings de la url del servidor
+		webservice = res.getString(R.string.server)
+				+ "bowling/bjparser/webservices/getLogin.php";
 		// Fin de la declaración e inicialización de variables y objetos//
 		entrar.setOnClickListener(new OnClickListener() {
 
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see android.view.View.OnClickListener#onClick(android.view.View)
 			 * Al hacer click se llama al metodo login()
 			 */
@@ -116,25 +123,44 @@ public class Login extends Activity {
 		}
 		// Se comprueba que cumple con los requisitos//
 		if (comprobado) {
-			//Una vez comprobados los requisitos, se ejecuta el metodo que llama al WebService
+			// Una vez comprobados los requisitos, se ejecuta el metodo que
+			// llama al WebService
 			executeWebService();
 		}
 	}
 
 	/**
 	 * 
-	 * Este método ejecuta en un Thread toda la logica del parser XML, inicia sesión, obtiene el IMEI y guarda los datos en el sharedPrefs
+	 * Este método ejecuta en un Thread toda la logica del parser XML, inicia
+	 * sesión, obtiene el IMEI y guarda los datos en el sharedPrefs
 	 * 
 	 */
 	public void executeWebService() {
-		final Handler crearToast = new Handler(){
-			/* (non-Javadoc)
-			 * @see android.os.Handler#handleMessage(android.os.Message)
-			 * Este metodo crea un toast y es llamado cuando el nombre o contraseña es incorrecto
+		final Handler crearToast = new Handler() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see android.os.Handler#handleMessage(android.os.Message) Este
+			 * metodo crea un toast y es llamado cuando el nombre o contraseña
+			 * es incorrecto
 			 */
 			@Override
-			public void handleMessage(Message msg0){
-				Toast.makeText(getApplicationContext(), "Nombre de usuario o contraseña erroneas", Toast.LENGTH_LONG).show();
+			public void handleMessage(Message msg0) {
+				Toast.makeText(getApplicationContext(),
+						"Nombre de usuario o contraseña erroneas",
+						Toast.LENGTH_LONG).show();
+			}
+		};
+		final Handler noConexion = new Handler() {
+			/* (non-Javadoc)
+			 * @see android.os.Handler#handleMessage(android.os.Message)
+			 * Este método handler crea un Toast cuando es llamado por un fallo en internet
+			 */
+			@Override
+			public void handleMessage(Message msg0) {
+				Toast.makeText(getApplicationContext(),
+						"Hay un problema con la conexión a internet",
+						Toast.LENGTH_SHORT).show();
 			}
 		};
 		new Thread(new Runnable() {
@@ -145,14 +171,15 @@ public class Login extends Activity {
 					// Obtener el imei del telefono
 					String imei = telefono.getDeviceId();
 					String finalImei = "";
-					//Obtener los ultimos 4 caracteres del imei
-					for(int a=imei.length()-1;a>imei.length()-5;a--){
-							finalImei = finalImei + Character.toString(imei.charAt(a));
+					// Obtener los ultimos 4 caracteres del imei
+					for (int a = imei.length() - 1; a > imei.length() - 5; a--) {
+						finalImei = finalImei
+								+ Character.toString(imei.charAt(a));
 					}
-					//Montamos la URL y le pasamos los parámetros.
+					// Montamos la URL y le pasamos los parámetros.
 					URL url = new URL(webservice + "?user="
 							+ email.getText().toString() + "&pass="
-							+ pass.getText().toString()+"&clave="+finalImei);
+							+ pass.getText().toString() + "&clave=" + finalImei);
 
 					// Creamos el parseador SAX
 					SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -162,38 +189,50 @@ public class Login extends Activity {
 					// Utilizamos nuestro propio parseador (CategoryHandler)
 					LoginController myExampleHandler = new LoginController();
 					xr.setContentHandler(myExampleHandler);
-					// Creamos un Stream de lectura (input)
-					// Además iniciamos la petición al WS incluyendo todos los datos
-					InputSource is = new InputSource(url.openStream());
-					// Le indicamos la codificación para evitar errores
-					is.setEncoding("UTF-8");
-					xr.parse(is);
+					// Además iniciamos la petición al WS incluyendo todos los
+					// datos
+					InputSource is = null;
+					//Este Try&Catch se emplea para evitar un ForceClose cuando no hay conexión de red o bien el webservice no se encuentra disponible
+					try {
+						// Creamos un Stream de lectura (input)
+						is = new InputSource(url.openStream());
+						is.setEncoding("UTF-8");
+						xr.parse(is);
 
-					// Asignamos al vector categories los datos parseados
-					data = myExampleHandler.getParsedData();
+						// Asignamos al vector data los datos parseados
+						data = myExampleHandler.getParsedData();
 
-					//Creamos un objeto de LoginData y obtenemos el id, que sera un numero cuando sea correcto y será "Error" cuando el acceso sea incorrecto					
-					for (int a = 0; a < data.size(); a++) {
-						LoginModel loginData = data.get(a);
-						id = loginData.getId();
-						System.out.println(id);
+						// Creamos un objeto de LoginData y obtenemos el id, que
+						// sera un numero cuando sea correcto y será "Error" cuando
+						// el acceso sea incorrecto
+						for (int a = 0; a < data.size(); a++) {
+							LoginModel loginData = data.get(a);
+							id = loginData.getId();
+							System.out.println(id);
+						}
+					} catch (IOException ioex) {
+						noConexion.sendEmptyMessage(0);
 					}
-
 				} catch (Exception e) {
 					// Ha ocurrido algún error
 					Log.e("Ideas4All", "Error", e);
 				}
-				//Cuando se detecta que el ID no es "error" que es lo que retorna el xml cuando se falla el login se procede a guardar los datos e invocar el menú
-				if (!id.equals("error")) {
-					SharedPreferences.Editor editor = prefs.edit();
-					editor.putBoolean("loggedIn", true);
-					editor.putString("id", id);
-					//Guardar los datos en el SharedPreferences
-					editor.commit();
-					//Llamar al método que comprueba si el "loggedIn" está en true, obtiene la id y se dirige a menú
-					checkIfLoggedIn();
-				}else{
-					crearToast.sendEmptyMessage(0);
+				// Cuando se detecta que el ID no es "error" que es lo que
+				// retorna el xml cuando se falla el login se procede a guardar
+				// los datos e invocar el menú
+				if (id != null) {
+					if (!id.equals("error")) {
+						SharedPreferences.Editor editor = prefs.edit();
+						editor.putBoolean("loggedIn", true);
+						editor.putString("id", id);
+						// Guardar los datos en el SharedPreferences
+						editor.commit();
+						// Llamar al método que comprueba si el "loggedIn" está
+						// en true, obtiene la id y se dirige a menú
+						checkIfLoggedIn();
+					} else {
+						crearToast.sendEmptyMessage(0);
+					}
 				}
 			}
 		}).start();
