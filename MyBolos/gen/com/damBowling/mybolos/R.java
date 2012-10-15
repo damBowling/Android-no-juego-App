@@ -21,16 +21,21 @@ public final class R {
     public static final class id {
         public static final int button1=0x7f080006;
         public static final int emailT=0x7f080003;
+        public static final int estadisticaBtn=0x7f080007;
         public static final int imageView1=0x7f080001;
-        public static final int menu_settings=0x7f080007;
+        public static final int logrosBtn=0x7f08000a;
+        public static final int menu_settings=0x7f08000b;
+        public static final int partidasBtn=0x7f080008;
         public static final int passT=0x7f080005;
+        public static final int reservasBtn=0x7f080009;
         public static final int scrollView1=0x7f080000;
         public static final int textView1=0x7f080002;
         public static final int tv2=0x7f080004;
     }
     public static final class layout {
         public static final int login=0x7f030000;
-        public static final int splash=0x7f030001;
+        public static final int menu=0x7f030001;
+        public static final int splash=0x7f030002;
     }
     public static final class menu {
         public static final int splash=0x7f070000;

@@ -11,6 +11,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -63,7 +64,7 @@ public class Login extends Activity {
 		// Hacemos un res.getString() y obtenemos el String almacenado en el XML
 		// de strings de la url del servidor
 		webservice = res.getString(R.string.server)
-				+ "bowling/bjparser/webservices/getLogin.php";
+				+ "api/getLogin.php";
 		// Fin de la declaración e inicialización de variables y objetos//
 		entrar.setOnClickListener(new OnClickListener() {
 
@@ -78,6 +79,7 @@ public class Login extends Activity {
 				logIn();
 			}
 		});
+		checkIfLoggedIn();
 	}
 
 	/**
@@ -136,6 +138,13 @@ public class Login extends Activity {
 	 * 
 	 */
 	public void executeWebService() {
+		//Creamos un progress dialog (Espinete dando vueltas que pone iniciando sesión y bloquea la interfaz con un fundido a negro
+		final ProgressDialog dialog = new ProgressDialog(this);
+		dialog.setCancelable(false);
+		dialog.setMessage("Iniciando sesión...");
+		dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		dialog.show();
+		
 		final Handler crearToast = new Handler() {
 			/*
 			 * (non-Javadoc)
@@ -149,6 +158,7 @@ public class Login extends Activity {
 				Toast.makeText(getApplicationContext(),
 						"Nombre de usuario o contraseña erroneas",
 						Toast.LENGTH_LONG).show();
+				dialog.dismiss();
 			}
 		};
 		final Handler noConexion = new Handler() {
@@ -161,6 +171,7 @@ public class Login extends Activity {
 				Toast.makeText(getApplicationContext(),
 						"Hay un problema con la conexión a internet",
 						Toast.LENGTH_SHORT).show();
+				dialog.dismiss();
 			}
 		};
 		new Thread(new Runnable() {

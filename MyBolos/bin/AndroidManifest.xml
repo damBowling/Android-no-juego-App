@@ -15,15 +15,15 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".Splash"
-            android:label="@string/title_activity_splash" >
+            android:label="MyBolos" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="Login"></activity>
-        <activity android:name="Menu"></activity>
+        <activity android:name="Login" android:screenOrientation="portrait" android:label="Iniciar Sesión"></activity>
+        <activity android:name="Menu" android:screenOrientation="portrait" android:label="MyBolos -Menú-"></activity>
     </application>
 
 </manifest>

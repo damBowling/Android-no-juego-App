@@ -4,6 +4,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_splash">Splash</string>
-    <string name="server">http://10.2.34.2/</string>
+    <string name="server">http://10.4.3.50/</string>
 
 </resources>
