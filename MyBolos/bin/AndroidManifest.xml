@@ -24,6 +24,7 @@
         </activity>
         <activity android:name="Login" android:screenOrientation="portrait" android:label="Iniciar Sesión"></activity>
         <activity android:name="Menu" android:screenOrientation="portrait" android:label="MyBolos -Menú-"></activity>
+        <activity android:name=".Estadisticas" android:screenOrientation="portrait" android:label="Estadísticas"></activity>
     </application>
 
 </manifest>
