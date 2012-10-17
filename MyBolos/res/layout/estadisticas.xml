@@ -28,7 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="@dimen/px30"
-                android:text="PLENOS" />
+                android:text="@string/pleno" />
 
             <TextView
                 android:id="@+id/textView_mostrar_total_plenos"
