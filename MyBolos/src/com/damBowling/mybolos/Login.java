@@ -13,6 +13,8 @@ import org.xml.sax.XMLReader;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -140,11 +142,23 @@ public class Login extends Activity {
 	public void executeWebService() {
 		//Creamos un progress dialog (Espinete dando vueltas que pone iniciando sesión y bloquea la interfaz con un fundido a negro
 		final ProgressDialog dialog = new ProgressDialog(this);
-		dialog.setCancelable(false);
+		dialog.setCancelable(true);
 		dialog.setMessage("Iniciando sesión...");
 		dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		dialog.setOnCancelListener(new OnCancelListener() {
+			/* (non-Javadoc)
+			 * @see android.content.DialogInterface.OnCancelListener#onCancel(android.content.DialogInterface)
+			 * 
+			 * Este método permite que al cancelar el dialogo de inicio de sesión (Pulsando atrás) se cancele el inicio de sesión
+			 */
+			public void onCancel(DialogInterface arg0) {
+				// TODO Auto-generated method stub
+				Intent i = new Intent(Login.this, Login.class);
+				startActivity(i);
+				finish();
+			}
+		});
 		dialog.show();
-		
 		final Handler crearToast = new Handler() {
 			/*
 			 * (non-Javadoc)
